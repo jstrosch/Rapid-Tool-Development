@@ -11,10 +11,14 @@ I found it more of a challenge to do this in Python than I had expected.  [pefil
 
 # Current Status
 
-The current status of the tool is that I parses a PE through the sections table and the individual sections, mapping sections of the file into structures for easier access.  However, I was unable to parse the imports and integrate PiED signatures.
+The current status of the tool is that it parses a PE through the sections table and the individual sections, mapping sections of the file into structures for easier access.  However, I was unable to parse the imports and integrate PiED signatures due to time restrictions.
 
 # Usage
 
 ```
 $ python read_pe.py -f <filename>
 ```
+
+# Installation & Dependencies
+
+This script does not rely on any additional Python modules, all you need is Python installed on your system. This script was written under OSX and not tested in any other OS.
