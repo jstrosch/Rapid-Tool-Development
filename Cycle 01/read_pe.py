@@ -1,5 +1,46 @@
 import os, struct, sys, string, getopt, mmap, exceptions, binascii
 
+IMAGE_DOS_SIGNATURE = 0x5A4D # MZ
+IMAGE_NT_SIGNATURE = 0x00004550 # PE00
+
+IMAGE_DOS_HEADER_format = ('IMAGE_DOS_HEADER',
+    ('H,e_magic', 'H,e_cblp', 'H,e_cp',
+    'H,e_crlc', 'H,e_cparhdr', 'H,e_minalloc',
+    'H,e_maxalloc', 'H,e_ss', 'H,e_sp', 'H,e_csum',
+    'H,e_ip', 'H,e_cs', 'H,e_lfarlc', 'H,e_ovno', '8s,e_res',
+    'H,e_oemid', 'H,e_oeminfo', '20s,e_res2',
+    'I,e_lfanew'))
+
+IMAGE_NT_HEADERS_format = ('IMAGE_NT_HEADERS', ('I,Signature',))
+
+IMAGE_FILE_HEADER_format = ('IMAGE_FILE_HEADER',
+    ('H,Machine', 'H,NumberOfSections',
+    'I,TimeDateStamp', 'I,PointerToSymbolTable',
+    'I,NumberOfSymbols', 'H,SizeOfOptionalHeader',
+    'H,Characteristics'))
+
+IMAGE_SECTION_HEADER_format = ('IMAGE_SECTION_HEADER',
+    ('8s,Name', 'I,Misc,Misc_PhysicalAddress,Misc_VirtualSize',
+    'I,VirtualAddress', 'I,SizeOfRawData', 'I,PointerToRawData',
+    'I,PointerToRelocations', 'I,PointerToLinenumbers',
+    'H,NumberOfRelocations', 'H,NumberOfLinenumbers',
+    'I,Characteristics'))
+
+IMAGE_OPTIONAL_HEADER_format = ('IMAGE_OPTIONAL_HEADER',
+    ('H,Magic', 'B,MajorLinkerVersion',
+    'B,MinorLinkerVersion', 'I,SizeOfCode',
+    'I,SizeOfInitializedData', 'I,SizeOfUninitializedData',
+    'I,AddressOfEntryPoint', 'I,BaseOfCode', 'I,BaseOfData',
+    'I,ImageBase', 'I,SectionAlignment', 'I,FileAlignment',
+    'H,MajorOperatingSystemVersion', 'H,MinorOperatingSystemVersion',
+    'H,MajorImageVersion', 'H,MinorImageVersion',
+    'H,MajorSubsystemVersion', 'H,MinorSubsystemVersion',
+    'I,Reserved1', 'I,SizeOfImage', 'I,SizeOfHeaders',
+    'I,CheckSum', 'H,Subsystem', 'H,DllCharacteristics',
+    'I,SizeOfStackReserve', 'I,SizeOfStackCommit',
+    'I,SizeOfHeapReserve', 'I,SizeOfHeapCommit',
+    'I,LoaderFlags', 'I,NumberOfRvaAndSizes' ))
+
 STRUCT_SIZEOF_TYPES = {
     'x': 1, 'c': 1, 'b': 1, 'B': 1,
     'h': 2, 'H': 2,
@@ -200,32 +241,6 @@ class Structure:
 
 def parse_pe(file_name):
 
-	IMAGE_DOS_SIGNATURE = 0x5A4D # MZ
-	IMAGE_NT_SIGNATURE = 0x00004550 # PE00
-
-   	IMAGE_DOS_HEADER_format = ('IMAGE_DOS_HEADER',
-        ('H,e_magic', 'H,e_cblp', 'H,e_cp',
-        'H,e_crlc', 'H,e_cparhdr', 'H,e_minalloc',
-        'H,e_maxalloc', 'H,e_ss', 'H,e_sp', 'H,e_csum',
-        'H,e_ip', 'H,e_cs', 'H,e_lfarlc', 'H,e_ovno', '8s,e_res',
-        'H,e_oemid', 'H,e_oeminfo', '20s,e_res2',
-        'I,e_lfanew'))
-
-   	IMAGE_NT_HEADERS_format = ('IMAGE_NT_HEADERS', ('I,Signature',))
-
-	IMAGE_FILE_HEADER_format = ('IMAGE_FILE_HEADER',
-	    ('H,Machine', 'H,NumberOfSections',
-	    'I,TimeDateStamp', 'I,PointerToSymbolTable',
-	    'I,NumberOfSymbols', 'H,SizeOfOptionalHeader',
-	    'H,Characteristics'))
-
-	IMAGE_SECTION_HEADER_format = ('IMAGE_SECTION_HEADER',
-	    ('8s,Name', 'I,Misc,Misc_PhysicalAddress,Misc_VirtualSize',
-	    'I,VirtualAddress', 'I,SizeOfRawData', 'I,PointerToRawData',
-	    'I,PointerToRelocations', 'I,PointerToLinenumbers',
-	    'H,NumberOfRelocations', 'H,NumberOfLinenumbers',
-	    'I,Characteristics'))
-
 	stat = os.stat(file_name)
 	if stat.st_size == 0:
 		print "[!] File is empty"
@@ -292,9 +307,6 @@ def parse_pe(file_name):
 		print "\tVirtual Address:\t" + hex(section.VirtualAddress)
 		print "\tPointer to raw:\t\t" + hex(section.PointerToRawData)
 		print ""
-
-
-
 
 def usage():
 	print '\nUsage:\nread_pe.py -f <filename>\nread_pe.py -d <directory>\n\n'
