@@ -12,7 +12,7 @@ This script is dependent on simpleJson for submission to VirusTotal
 
 A demo of this script is available on YouTube:
 
-[YouTube Demo]()
+[YouTube Demo](https://youtu.be/8cYKfD-d9EY)
 
 # Usage
 
