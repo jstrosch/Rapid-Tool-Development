@@ -31,7 +31,7 @@ print "[*] Analysing text section 0x%08x to 0x%08x" % (text_start, text_end)
 # Get all instructions for the function
 heads = Heads(text_start,text_end)
 
-#find suspiciuos API calls
+# do work
 for i in heads:
 	instruction = GetMnem(i)
 
@@ -68,12 +68,12 @@ for i in heads:
 			detect_count += 1
 
 	# Check for rdtsc timing
-
 	if instruction == "rdtsc":
 		timing_checks.append(i)
 
 
 if len(timing_checks) >= 2:
+	detect_count += 1
 	print "[!] Timing checks detected at the following locations: "
 
 	for check in timing_checks:
@@ -81,4 +81,4 @@ if len(timing_checks) >= 2:
 		SetColor(check,CIC_ITEM,0xEE82EE)
 
 
-print "\n\n[!] DONE! Found %d suspicous function calls\n\n" % detect_count
+print "\n\n[!] DONE! Found %d suspicous items\n\n" % detect_count
